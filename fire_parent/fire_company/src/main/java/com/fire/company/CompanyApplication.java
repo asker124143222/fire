@@ -9,8 +9,10 @@ import org.springframework.boot.autoconfigure.SpringBootApplication;
  * @Date: 2020/4/17 10:46
  * @Version: 1.0
  * @Description: TODO
+ * 配置springboot的包扫描scanBasePackages = "com.fire" 是为了通用模块里的公共异常等类可以被扫描到。
  **/
-@SpringBootApplication
+
+@SpringBootApplication(scanBasePackages = "com.fire")
 @MapperScan("com.fire.company.dao")
 public class CompanyApplication {
     public static void main(String[] args) {
