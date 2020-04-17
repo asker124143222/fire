@@ -1,0 +1,1 @@
+实体类全部在fire_common_model中实现

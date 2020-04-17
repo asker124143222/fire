@@ -10,6 +10,7 @@
     <modules>
         <module>fire_common</module>
         <module>fire_common_model</module>
+        <module>fire_company</module>
     </modules>
     <packaging>pom</packaging>
     <description>火之父工程</description>
@@ -29,6 +30,10 @@
 
     <!--依赖包-->
     <dependencies>
+        <dependency>
+            <groupId>org.springframework.boot</groupId>
+            <artifactId>spring-boot-starter-web</artifactId>
+        </dependency>
         <!--测试包-->
         <dependency>
             <groupId>org.springframework.boot</groupId>
