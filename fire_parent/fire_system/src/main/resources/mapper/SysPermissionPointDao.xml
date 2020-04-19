@@ -1,0 +1,77 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.fire.system.dao.SysPermissionPointDao">
+
+    <resultMap type="com.fire.entity.system.SysPermissionPoint" id="SysPermissionPointMap">
+        <result property="id" column="id" jdbcType="INTEGER"/>
+        <result property="pointClass" column="point_class" jdbcType="VARCHAR"/>
+        <result property="pointIcon" column="point_icon" jdbcType="VARCHAR"/>
+        <result property="pointStatus" column="point_status" jdbcType="INTEGER"/>
+    </resultMap>
+
+    <!--查询单个-->
+    <select id="queryById" resultMap="SysPermissionPointMap">
+        select
+          id, point_class, point_icon, point_status
+        from firedb.sys_permission_point
+        where id = #{id}
+    </select>
+
+    <!--查询指定行数据-->
+    <select id="queryAllByLimit" resultMap="SysPermissionPointMap">
+        select
+          id, point_class, point_icon, point_status
+        from firedb.sys_permission_point
+        limit #{offset}, #{limit}
+    </select>
+
+    <!--通过实体作为筛选条件查询-->
+    <select id="queryAll" resultMap="SysPermissionPointMap">
+        select
+          id, point_class, point_icon, point_status
+        from firedb.sys_permission_point
+        <where>
+            <if test="id != null">
+                and id = #{id}
+            </if>
+            <if test="pointClass != null and pointClass != ''">
+                and point_class = #{pointClass}
+            </if>
+            <if test="pointIcon != null and pointIcon != ''">
+                and point_icon = #{pointIcon}
+            </if>
+            <if test="pointStatus != null">
+                and point_status = #{pointStatus}
+            </if>
+        </where>
+    </select>
+
+    <!--新增所有列-->
+    <insert id="insert" keyProperty="id" useGeneratedKeys="false">
+        insert into firedb.sys_permission_point(id,point_class, point_icon, point_status)
+        values (#{id},#{pointClass}, #{pointIcon}, #{pointStatus})
+    </insert>
+
+    <!--通过主键修改数据-->
+    <update id="update">
+        update firedb.sys_permission_point
+        <set>
+            <if test="pointClass != null and pointClass != ''">
+                point_class = #{pointClass},
+            </if>
+            <if test="pointIcon != null and pointIcon != ''">
+                point_icon = #{pointIcon},
+            </if>
+            <if test="pointStatus != null">
+                point_status = #{pointStatus},
+            </if>
+        </set>
+        where id = #{id}
+    </update>
+
+    <!--通过主键删除-->
+    <delete id="deleteById">
+        delete from firedb.sys_permission_point where id = #{id}
+    </delete>
+
+</mapper>

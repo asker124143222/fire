@@ -9,9 +9,9 @@ import lombok.Getter;
 @Getter
 public class CommonException extends Exception  {
 
-    private StatusCode statusCode;
+    private int statusCode;
 
-    public CommonException(StatusCode statusCode) {
+    public CommonException(int statusCode) {
         this.statusCode = statusCode;
     }
 }

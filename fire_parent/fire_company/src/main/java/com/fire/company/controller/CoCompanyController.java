@@ -34,7 +34,6 @@ public class CoCompanyController {
      */
     @GetMapping("{id}")
     public CoCompany selectOne(@PathVariable Long id) {
-        int i = 10/0;
         return this.coCompanyService.queryById(id);
     }
 
@@ -50,22 +49,14 @@ public class CoCompanyController {
 
     @PostMapping
     public Result<CoCompany> insert(@RequestBody CoCompany coCompany) {
-        try {
-            coCompany = coCompanyService.insert(coCompany);
-            return new Result<>(true, StatusCode.OK,"添加成功",coCompany);
-        }catch (Exception e){
-            return new Result<>(false,StatusCode.ERROR,"添加失败"+e.getMessage(),coCompany);
-        }
+        coCompany = coCompanyService.insert(coCompany);
+        return new Result<>(true, StatusCode.OK,"添加成功",coCompany);
     }
 
     @PutMapping
     public Result<CoCompany> update(@RequestBody CoCompany coCompany) {
-        try {
-            coCompany = coCompanyService.update(coCompany);
-            return new Result<>(true, StatusCode.OK,"修改成功",coCompany);
-        }catch (Exception e){
-            return new Result<>(false,StatusCode.ERROR,"修改失败"+e.getMessage(),coCompany);
-        }
+        coCompany = coCompanyService.update(coCompany);
+        return new Result<>(true, StatusCode.OK,"修改成功",coCompany);
     }
 
     @DeleteMapping("{id}")

@@ -11,6 +11,7 @@
         <module>fire_common</module>
         <module>fire_common_model</module>
         <module>fire_company</module>
+        <module>fire_system</module>
     </modules>
     <packaging>pom</packaging>
     <description>火之父工程</description>
@@ -40,11 +41,11 @@
             <artifactId>spring-boot-starter-test</artifactId>
         </dependency>
 
-        <dependency>
-            <groupId>com.alibaba</groupId>
-            <artifactId>fastjson</artifactId>
-            <version>1.2.68</version>
-        </dependency>
+<!--        <dependency>-->
+<!--            <groupId>com.alibaba</groupId>-->
+<!--            <artifactId>fastjson</artifactId>-->
+<!--            <version>1.2.68</version>-->
+<!--        </dependency>-->
 
         <dependency>
             <groupId>org.projectlombok</groupId>

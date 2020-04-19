@@ -1,0 +1,189 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.fire.system.dao.SysUserDao">
+
+    <resultMap type="com.fire.entity.system.SysUser" id="SysUserMap">
+        <result property="id" column="id" jdbcType="INTEGER"/>
+        <result property="mobile" column="mobile" jdbcType="VARCHAR"/>
+        <result property="username" column="username" jdbcType="VARCHAR"/>
+        <result property="password" column="password" jdbcType="VARCHAR"/>
+        <result property="enableState" column="enable_state" jdbcType="INTEGER"/>
+        <result property="createTime" column="create_time" jdbcType="TIMESTAMP"/>
+        <result property="departmentId" column="department_id" jdbcType="INTEGER"/>
+        <result property="timeOfEntry" column="time_of_entry" jdbcType="TIMESTAMP"/>
+        <result property="formOfEmployment" column="form_of_employment" jdbcType="INTEGER"/>
+        <result property="workNumber" column="work_number" jdbcType="VARCHAR"/>
+        <result property="formOfManagement" column="form_of_management" jdbcType="VARCHAR"/>
+        <result property="workingCity" column="working_city" jdbcType="VARCHAR"/>
+        <result property="correctionTime" column="correction_time" jdbcType="TIMESTAMP"/>
+        <result property="inServiceStatus" column="in_service_status" jdbcType="INTEGER"/>
+        <result property="companyId" column="company_id" jdbcType="INTEGER"/>
+        <result property="companyName" column="company_name" jdbcType="VARCHAR"/>
+        <result property="departmentName" column="department_name" jdbcType="VARCHAR"/>
+        <result property="level" column="level" jdbcType="VARCHAR"/>
+        <result property="staffPhoto" column="staff_photo" jdbcType="VARCHAR"/>
+        <result property="updateTime" column="update_time" jdbcType="TIMESTAMP"/>
+    </resultMap>
+
+    <!--查询单个-->
+    <select id="queryById" resultMap="SysUserMap">
+        select
+          id, mobile, username, password, enable_state, create_time, department_id, time_of_entry, form_of_employment, work_number, form_of_management, working_city, correction_time, in_service_status, company_id, company_name, department_name, level, staff_photo, update_time
+        from firedb.sys_user
+        where id = #{id}
+    </select>
+
+    <!--查询指定行数据-->
+    <select id="queryAllByLimit" resultMap="SysUserMap">
+        select
+          id, mobile, username, password, enable_state, create_time, department_id, time_of_entry, form_of_employment, work_number, form_of_management, working_city, correction_time, in_service_status, company_id, company_name, department_name, level, staff_photo, update_time
+        from firedb.sys_user
+        limit #{offset}, #{limit}
+    </select>
+
+    <!--通过实体作为筛选条件查询-->
+    <select id="queryAll" resultMap="SysUserMap">
+        select
+          id, mobile, username, password, enable_state, create_time, department_id, time_of_entry, form_of_employment, work_number, form_of_management, working_city, correction_time, in_service_status, company_id, company_name, department_name, level, staff_photo, update_time
+        from firedb.sys_user
+        <where>
+            <if test="id != null">
+                and id = #{id}
+            </if>
+            <if test="mobile != null and mobile != ''">
+                and mobile = #{mobile}
+            </if>
+            <if test="username != null and username != ''">
+                and username = #{username}
+            </if>
+            <if test="password != null and password != ''">
+                and password = #{password}
+            </if>
+            <if test="enableState != null">
+                and enable_state = #{enableState}
+            </if>
+            <if test="createTime != null">
+                and create_time = #{createTime}
+            </if>
+            <if test="departmentId != null">
+                and department_id = #{departmentId}
+            </if>
+            <if test="timeOfEntry != null">
+                and time_of_entry = #{timeOfEntry}
+            </if>
+            <if test="formOfEmployment != null">
+                and form_of_employment = #{formOfEmployment}
+            </if>
+            <if test="workNumber != null and workNumber != ''">
+                and work_number = #{workNumber}
+            </if>
+            <if test="formOfManagement != null and formOfManagement != ''">
+                and form_of_management = #{formOfManagement}
+            </if>
+            <if test="workingCity != null and workingCity != ''">
+                and working_city = #{workingCity}
+            </if>
+            <if test="correctionTime != null">
+                and correction_time = #{correctionTime}
+            </if>
+            <if test="inServiceStatus != null">
+                and in_service_status = #{inServiceStatus}
+            </if>
+            <if test="companyId != null">
+                and company_id = #{companyId}
+            </if>
+            <if test="companyName != null and companyName != ''">
+                and company_name = #{companyName}
+            </if>
+            <if test="departmentName != null and departmentName != ''">
+                and department_name = #{departmentName}
+            </if>
+            <if test="level != null and level != ''">
+                and level = #{level}
+            </if>
+            <if test="staffPhoto != null and staffPhoto != ''">
+                and staff_photo = #{staffPhoto}
+            </if>
+            <if test="updateTime != null">
+                and update_time = #{updateTime}
+            </if>
+        </where>
+    </select>
+
+    <!--新增所有列-->
+    <insert id="insert" keyProperty="id" useGeneratedKeys="false">
+        insert into firedb.sys_user(id,mobile, username, password, enable_state, create_time, department_id, time_of_entry, form_of_employment, work_number, form_of_management, working_city, correction_time, in_service_status, company_id, company_name, department_name, level, staff_photo, update_time)
+        values (#{id}, #{mobile}, #{username}, #{password}, #{enableState}, #{createTime}, #{departmentId}, #{timeOfEntry}, #{formOfEmployment}, #{workNumber}, #{formOfManagement}, #{workingCity}, #{correctionTime}, #{inServiceStatus}, #{companyId}, #{companyName}, #{departmentName}, #{level}, #{staffPhoto}, #{updateTime})
+    </insert>
+
+    <!--通过主键修改数据-->
+    <update id="update">
+        update firedb.sys_user
+        <set>
+            <if test="mobile != null and mobile != ''">
+                mobile = #{mobile},
+            </if>
+            <if test="username != null and username != ''">
+                username = #{username},
+            </if>
+            <if test="password != null and password != ''">
+                password = #{password},
+            </if>
+            <if test="enableState != null">
+                enable_state = #{enableState},
+            </if>
+            <if test="createTime != null">
+                create_time = #{createTime},
+            </if>
+            <if test="departmentId != null">
+                department_id = #{departmentId},
+            </if>
+            <if test="timeOfEntry != null">
+                time_of_entry = #{timeOfEntry},
+            </if>
+            <if test="formOfEmployment != null">
+                form_of_employment = #{formOfEmployment},
+            </if>
+            <if test="workNumber != null and workNumber != ''">
+                work_number = #{workNumber},
+            </if>
+            <if test="formOfManagement != null and formOfManagement != ''">
+                form_of_management = #{formOfManagement},
+            </if>
+            <if test="workingCity != null and workingCity != ''">
+                working_city = #{workingCity},
+            </if>
+            <if test="correctionTime != null">
+                correction_time = #{correctionTime},
+            </if>
+            <if test="inServiceStatus != null">
+                in_service_status = #{inServiceStatus},
+            </if>
+<!--            <if test="companyId != null">-->
+<!--                company_id = #{companyId},-->
+<!--            </if>-->
+<!--            <if test="companyName != null and companyName != ''">-->
+<!--                company_name = #{companyName},-->
+<!--            </if>-->
+            <if test="departmentName != null and departmentName != ''">
+                department_name = #{departmentName},
+            </if>
+            <if test="level != null and level != ''">
+                level = #{level},
+            </if>
+            <if test="staffPhoto != null and staffPhoto != ''">
+                staff_photo = #{staffPhoto},
+            </if>
+            <if test="updateTime != null">
+                update_time = #{updateTime},
+            </if>
+        </set>
+        where id = #{id}
+    </update>
+
+    <!--通过主键删除-->
+    <delete id="deleteById">
+        delete from firedb.sys_user where id = #{id}
+    </delete>
+
+</mapper>
