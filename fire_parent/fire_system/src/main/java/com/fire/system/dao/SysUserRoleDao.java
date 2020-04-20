@@ -62,7 +62,8 @@ public interface SysUserRoleDao {
     int deleteById(Long userId);
 
 
-    //检查userId是否在sys_user中存在
+    //检查userId是否在sys_user中存在，传入userId集合，返回count数量，
+    // 如果传入数量与返回数量不等，则存在异常userId
     @Select({
             "<script>",
             "select count(0) from sys_user where id in ",
@@ -72,4 +73,16 @@ public interface SysUserRoleDao {
             "</script>"
     })
     Integer checkUserId(@Param(value = "userIds") List<Long> userIds);
+
+    //检查roleId是否在sys_role中存在，传入roleId集合，返回count数量，
+    // 如果传入数量与返回数量不等，则存在异常roleId
+    @Select({
+            "<script>",
+            "select count(0) from sys_role where id in ",
+            "<foreach collection='roleIds' item='item' index='index' open='(' separator=',' close=')'>",
+            "(#{item})",
+            "</foreach>",
+            "</script>"
+    })
+    Integer checkRoleId(@Param(value = "roleIds") List<Long> roleIds);
 }

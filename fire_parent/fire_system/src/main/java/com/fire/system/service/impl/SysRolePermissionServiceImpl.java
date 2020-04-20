@@ -1,12 +1,19 @@
 package com.fire.system.service.impl;
 
+import com.fire.common.utils.PermissionConstants;
 import com.fire.entity.system.SysRolePermission;
 import com.fire.system.dao.SysRolePermissionDao;
 import com.fire.system.service.SysRolePermissionService;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import javax.annotation.Resource;
+import java.util.ArrayList;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 
 /**
  * (SysRolePermission)表服务实现类
@@ -16,64 +23,66 @@ import java.util.List;
  */
 @Service("sysRolePermissionService")
 public class SysRolePermissionServiceImpl implements SysRolePermissionService {
+    private final Logger logger = LoggerFactory.getLogger(getClass());
+
     @Resource
     private SysRolePermissionDao sysRolePermissionDao;
 
-    /**
-     * 通过ID查询单条数据
-     *
-     * @param roleId 主键
-     * @return 实例对象
-     */
     @Override
-    public SysRolePermission queryById(Long roleId) {
-        return this.sysRolePermissionDao.queryById(roleId);
+    public List<Long> queryById(Long roleId) {
+        return sysRolePermissionDao.queryById(roleId);
     }
 
-    /**
-     * 查询多条数据
-     *
-     * @param offset 查询起始位置
-     * @param limit 查询条数
-     * @return 对象列表
-     */
+    @Transactional
     @Override
-    public List<SysRolePermission> queryAllByLimit(int offset, int limit) {
-        return this.sysRolePermissionDao.queryAllByLimit(offset, limit);
+    public int insertByBatch(List<SysRolePermission> list) throws Exception {
+        //分配权限时，页面菜单和按钮自动给与API的权限
+        //除了pid=0的API，菜单和按钮必然是API权限的上级，所以需要将以菜单和按钮为父类的API权限自动加入到分配表中
+        Set<SysRolePermission> permissions = new HashSet<>();
+        Set<Long> roleIds = new HashSet<>();
+        Set<Long> permIds = new HashSet<>();
+        for (SysRolePermission rolePermission : list) {
+            Long roleId = rolePermission.getRoleId();
+            Long permId = rolePermission.getPermissionId();
+            roleIds.add(roleId);
+            permIds.add(permId);
+            //查找菜单或者按钮下的api子权限
+            List<SysRolePermission> apiList =
+                    sysRolePermissionDao.queryByTypeAndPid(
+                            roleId,
+                            PermissionConstants.PERMISSION_API,
+                            permId);
+            permissions.addAll(apiList); //加入api权限
+            permissions.add(rolePermission);//加入当前菜单或者按钮权限
+        }
+
+        //加入对roleId和permId合法性校验
+        if(permIds.size() > 0){
+            int count = sysRolePermissionDao.checkPermissionId(new ArrayList<>(permIds));
+            if(count!=permIds.size())
+            {
+                logger.warn("存在不合法的permId:"+permIds.toString()+"，合法count:"+count );
+                throw new Exception("存在不合法的permIds："+permIds.toString());
+            }
+        }
+
+        if(roleIds.size() > 0){
+            int count = sysRolePermissionDao.checkRoleId(new ArrayList<>(roleIds));
+            if(count!=roleIds.size()){
+                logger.warn("存在不合法的roleId:"+roleIds.toString()+"，合法count:"+count );
+                throw new Exception("存在不合法的roleId："+roleIds.toString());
+            }
+        }
+
+        //先删除权限，然后再新增
+        for (Long id : roleIds) {
+            sysRolePermissionDao.deleteById(id);
+        }
+        return sysRolePermissionDao.insertByBatch(new ArrayList<>(permissions));
     }
 
-    /**
-     * 新增数据
-     *
-     * @param sysRolePermission 实例对象
-     * @return 实例对象
-     */
     @Override
-    public SysRolePermission insert(SysRolePermission sysRolePermission) {
-        this.sysRolePermissionDao.insert(sysRolePermission);
-        return sysRolePermission;
-    }
-
-    /**
-     * 修改数据
-     *
-     * @param sysRolePermission 实例对象
-     * @return 实例对象
-     */
-    @Override
-    public SysRolePermission update(SysRolePermission sysRolePermission) {
-        this.sysRolePermissionDao.update(sysRolePermission);
-        return this.queryById(sysRolePermission.getRoleId());
-    }
-
-    /**
-     * 通过主键删除数据
-     *
-     * @param roleId 主键
-     * @return 是否成功
-     */
-    @Override
-    public boolean deleteById(Long roleId) {
-        return this.sysRolePermissionDao.deleteById(roleId) > 0;
+    public int deleteById(Long roleId) {
+        return sysRolePermissionDao.deleteById(roleId);
     }
 }

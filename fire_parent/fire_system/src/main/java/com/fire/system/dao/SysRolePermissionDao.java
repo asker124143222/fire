@@ -1,7 +1,11 @@
 package com.fire.system.dao;
 
 import com.fire.entity.system.SysRolePermission;
+import org.apache.ibatis.annotations.Delete;
+import org.apache.ibatis.annotations.Insert;
 import org.apache.ibatis.annotations.Param;
+import org.apache.ibatis.annotations.Select;
+
 import java.util.List;
 
 /**
@@ -12,54 +16,50 @@ import java.util.List;
  */
 public interface SysRolePermissionDao {
 
-    /**
-     * 通过ID查询单条数据
-     *
-     * @param roleId 主键
-     * @return 实例对象
-     */
-    SysRolePermission queryById(Long roleId);
+    //通过角色id查询权限id列表
+    @Select("select permission_id from sys_role_permission where role_id=#{roleId}")
+    List<Long> queryById(Long roleId);
 
-    /**
-     * 查询指定行数据
-     *
-     * @param offset 查询起始位置
-     * @param limit 查询条数
-     * @return 对象列表
-     */
-    List<SysRolePermission> queryAllByLimit(@Param("offset") int offset, @Param("limit") int limit);
+    //为角色分配权限
+    @Insert({
+            "<script>",
+            "insert into sys_role_permission(role_id,permission_id) values ",
+            "<foreach collection='list' item='item' index='index' separator=','>",
+            "(#{item.roleId}, #{item.permissionId})",
+            "</foreach>",
+            "</script>"
+    })
+    int insertByBatch(@Param("list") List<SysRolePermission> list);
 
-
-    /**
-     * 通过实体作为筛选条件查询
-     *
-     * @param sysRolePermission 实例对象
-     * @return 对象列表
-     */
-    List<SysRolePermission> queryAll(SysRolePermission sysRolePermission);
-
-    /**
-     * 新增数据
-     *
-     * @param sysRolePermission 实例对象
-     * @return 影响行数
-     */
-    int insert(SysRolePermission sysRolePermission);
-
-    /**
-     * 修改数据
-     *
-     * @param sysRolePermission 实例对象
-     * @return 影响行数
-     */
-    int update(SysRolePermission sysRolePermission);
-
-    /**
-     * 通过主键删除数据
-     *
-     * @param roleId 主键
-     * @return 影响行数
-     */
+    //删除角色下所有权限
+    @Delete("delete from sys_role_permission where role_id=#{roleId}")
     int deleteById(Long roleId);
 
+    //查询permissionId的子权限
+    @Select("select #{roleId},id as permissionId from sys_permission a where a.pid = #{permissionId} and a.type=#{type}")
+    List<SysRolePermission> queryByTypeAndPid(@Param("roleId") Long roleId,@Param("type") int type,@Param("permissionId") Long permissionId);
+
+    //检查roleId是否在sys_role中存在，传入roleId集合，返回count数量，
+    // 如果传入数量与返回数量不等，则存在异常roleId
+    @Select({
+            "<script>",
+            "select count(0) from sys_role where id in ",
+            "<foreach collection='roleIds' item='item' index='index' open='(' separator=',' close=')'>",
+            "(#{item})",
+            "</foreach>",
+            "</script>"
+    })
+    Integer checkRoleId(@Param(value = "roleIds") List<Long> roleIds);
+
+    //检查permissionId是否在sys_permission中存在，传入permissionId集合，返回count数量，
+    // 如果传入数量与返回数量不等，则存在异常permissionId
+    @Select({
+            "<script>",
+            "select count(0) from sys_permission where id in ",
+            "<foreach collection='permissionIds' item='item' index='index' open='(' separator=',' close=')'>",
+            "(#{item})",
+            "</foreach>",
+            "</script>"
+    })
+    Integer checkPermissionId(@Param(value = "permissionIds") List<Long> permissionIds);
 }

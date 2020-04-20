@@ -4,6 +4,8 @@ import com.fire.common.controller.BaseController;
 import com.fire.common.model.Result;
 import com.fire.common.model.StatusCode;
 import com.fire.entity.system.SysRole;
+import com.fire.entity.system.SysRolePermission;
+import com.fire.system.service.SysRolePermissionService;
 import com.fire.system.service.SysRoleService;
 import com.github.pagehelper.PageInfo;
 import org.springframework.web.bind.annotation.*;
@@ -26,6 +28,9 @@ public class SysRoleController extends BaseController {
      */
     @Resource
     private SysRoleService sysRoleService;
+
+    @Resource
+    private SysRolePermissionService sysRolePermissionService;
 
     /**
      * 通过主键查询单条数据
@@ -69,6 +74,19 @@ public class SysRoleController extends BaseController {
         } else {
             return new Result(false, StatusCode.OK, "删除失败");
         }
+    }
+
+    //批量更新角色的权限，可以对多个不用的roleId操作，无论新增、更新、删除用户角色，都是调用此方法
+    @PutMapping("/permission")
+    public Result<Integer> insertRolePermission(@RequestBody List<SysRolePermission> list) throws Exception {
+        int count = this.sysRolePermissionService.insertByBatch(list);
+        return new Result<>(true,StatusCode.OK,"更新成功",count);
+    }
+
+    //根据roleId查询权限id列表
+    @GetMapping("/permission/{roleId}")
+    public List<Long> queryPermissionByRole(@PathVariable Long roleId){
+        return this.sysRolePermissionService.queryById(roleId);
     }
 
 }

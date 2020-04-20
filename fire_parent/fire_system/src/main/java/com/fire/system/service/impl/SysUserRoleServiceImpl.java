@@ -1,10 +1,10 @@
 package com.fire.system.service.impl;
 
-import com.fire.common.exception.CommonException;
-import com.fire.common.model.StatusCode;
 import com.fire.entity.system.SysUserRole;
 import com.fire.system.dao.SysUserRoleDao;
 import com.fire.system.service.SysUserRoleService;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -22,6 +22,8 @@ import java.util.Set;
  */
 @Service("sysUserRoleService")
 public class SysUserRoleServiceImpl implements SysUserRoleService {
+    private final Logger logger = LoggerFactory.getLogger(getClass());
+
     @Resource
     private SysUserRoleDao sysUserRoleDao;
 
@@ -34,22 +36,38 @@ public class SysUserRoleServiceImpl implements SysUserRoleService {
     @Transactional
     @Override
     public int insertByBatch(List<SysUserRole> roles) throws Exception {
-        Set<Long> set = new HashSet<>();
+        Set<Long> userIdsSet = new HashSet<>();
+        Set<Long> roleIdsSet = new HashSet<>();
         //去重
         for (SysUserRole userRole : roles) {
-            set.add(userRole.getUserId());
+            userIdsSet.add(userRole.getUserId());
+            roleIdsSet.add(userRole.getRoleId());
         }
         //加入对用户id和角色id合法性校验
-        int count = sysUserRoleDao.checkUserId(new ArrayList<>(set));
-        if(count!=set.size())
-        {
-            System.out.println("count:"+count+"  userId:"+set.toString());
-            throw new Exception("存在不合法的userId："+set.toString());
+        if(userIdsSet.size() > 0){
+            int count = sysUserRoleDao.checkUserId(new ArrayList<>(userIdsSet));
+            if(count!=userIdsSet.size())
+            {
+                logger.warn("存在不合法的userId:"+userIdsSet.toString()+"，合法count:"+count );
+                throw new Exception("存在不合法的userId："+userIdsSet.toString());
+            }
         }
 
+        if(roleIdsSet.size() > 0){
+            int count = sysUserRoleDao.checkRoleId(new ArrayList<>(roleIdsSet));
+            if(count!=roleIdsSet.size()){
+                logger.warn("存在不合法的roleId:"+roleIdsSet.toString()+"，合法count:"+count );
+                throw new Exception("存在不合法的roleId："+roleIdsSet.toString());
+            }
+        }
+
+
+
         //先删除再新增
-        for (Long userId : set) {
-            deleteById(userId);
+        for (Long userId : userIdsSet) {
+            //必须调用dao里的deleteById，不能调用本类里的deleteById，否则事务将会失效
+            //事务的原理是动态代理
+            sysUserRoleDao.deleteById(userId);
         }
         return sysUserRoleDao.insertByBatch(roles);
     }

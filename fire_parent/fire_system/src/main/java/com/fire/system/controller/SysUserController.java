@@ -79,11 +79,11 @@ public class SysUserController extends BaseController {
     }
 
 
-    //批量新增角色，可以对多个不用的userId操作，无论新增、更新、删除用户角色，都是调用此方法
-    @PostMapping("/role")
+    //批量更新角色，可以对多个不用的userId操作，无论新增、更新、删除用户角色，都是调用此方法
+    @PutMapping("/role")
     public Result<Integer> insertUserRole(@RequestBody List<SysUserRole> list) throws Exception {
         int count = sysUserRoleService.insertByBatch(list);
-        return new Result<>(true, StatusCode.OK, "新增完成", count);
+        return new Result<>(true, StatusCode.OK, "更新完成", count);
     }
 
     //根据userId查询角色id列表
