@@ -97,4 +97,15 @@ public class SysUserServiceImpl implements SysUserService {
     public boolean deleteById(Long id) {
         return this.sysUserDao.deleteById(id) > 0;
     }
+
+    /**
+     * 分别角色，一个用户可以分配多个角色
+     *
+     * @param id      用户id
+     * @param roleIds 角色id
+     */
+    @Override
+    public void assignRoles(Long id, List<Long> roleIds) {
+
+    }
 }

@@ -180,13 +180,13 @@ CREATE TABLE `sys_role`
 -- Records of sys_role
 -- ----------------------------
 INSERT INTO `sys_role`
-VALUES ('1062944989845262336', '人事经理', '负责整合人事部门', '1');
+VALUES ('1062944989845262336', '人事经理', '负责整合人事部门', '1', null, null);
 INSERT INTO `sys_role`
-VALUES ('1064098829009293312', '系统管理员', '管理整合平台，可以操作企业所有功能', '1');
+VALUES ('1064098829009293312', '系统管理员', '管理整合平台，可以操作企业所有功能', '1', null, null);
 INSERT INTO `sys_role`
-VALUES ('1064098935443951616', '人事专员', '只能操作员工菜单', '1');
+VALUES ('1064098935443951616', '人事专员', '只能操作员工菜单', '1', null, null);
 INSERT INTO `sys_role`
-VALUES ('1064099035536822272', '薪资专员', '绩效管理', '1');
+VALUES ('1064099035536822272', '薪资专员', '绩效管理', '1', null, null);
 
 -- ----------------------------
 -- Table structure for sys_permission
@@ -286,7 +286,50 @@ CREATE TABLE `sys_permission_point`
 ) ENGINE = InnoDB
   DEFAULT CHARSET = utf8mb4;
 
-INSERT INTO `sys_permission_point` VALUES ('1063313020819738624', 'dept', 'dept', '1');
-INSERT INTO `sys_permission_point` VALUES ('1063315194329042944', 'point-user-delete', 'point-user-delete', '1');
-INSERT INTO `sys_permission_point` VALUES ('1063328310592933888', 'POINT-USER-ADD', 'POINT-USER-ADD', '1');
-INSERT INTO `sys_permission_point` VALUES ('1063328532492587008', 'POINT-USER-UPDATE', 'POINT-USER-UPDATE', '1');
+INSERT INTO `sys_permission_point`
+VALUES ('1063313020819738624', 'dept', 'dept', '1');
+INSERT INTO `sys_permission_point`
+VALUES ('1063315194329042944', 'point-user-delete', 'point-user-delete', '1');
+INSERT INTO `sys_permission_point`
+VALUES ('1063328310592933888', 'POINT-USER-ADD', 'POINT-USER-ADD', '1');
+INSERT INTO `sys_permission_point`
+VALUES ('1063328532492587008', 'POINT-USER-UPDATE', 'POINT-USER-UPDATE', '1');
+
+-- ----------------------------
+-- Table structure for sys_user_role
+-- ----------------------------
+-- DROP TABLE IF EXISTS `sys_user_role`;
+CREATE TABLE `sys_user_role`
+(
+    `user_id` bigint NOT NULL COMMENT '用户ID',
+    `role_id` bigint NOT NULL COMMENT '角色ID',
+    PRIMARY KEY (`user_id`, `role_id`),
+    KEY `FK74qx7rkbtq2wqms78gljv87a1` (`role_id`),
+    KEY `FKee9dk0vg99shvsytflym6egx1` (`user_id`)
+) ENGINE = InnoDB
+  DEFAULT CHARSET = utf8mb4;
+
+INSERT INTO `sys_user_role`
+VALUES (1066370498633486336,1062944989845262336);
+
+
+-- ----------------------------
+-- Table structure for sys_role_permission
+-- ----------------------------
+-- DROP TABLE IF EXISTS `sys_role_permission`;
+CREATE TABLE `sys_role_permission`
+(
+    `role_id`       bigint NOT NULL COMMENT '角色ID',
+    `permission_id` bigint NOT NULL COMMENT '权限ID',
+    PRIMARY KEY (`role_id`, `permission_id`),
+    KEY `FK74qx7rkbtq2wqms78gljv87a0` (`permission_id`),
+    KEY `FKee9dk0vg99shvsytflym6egxd` (`role_id`)
+) ENGINE = InnoDB
+  DEFAULT CHARSET = utf8mb4;
+
+INSERT INTO `sys_role_permission`
+VALUES ('1062944989845262336', '1063315016368918528');
+INSERT INTO `sys_role_permission`
+VALUES ('1062944989845262336', '1063328310592933888');
+INSERT INTO `sys_role_permission`
+VALUES ('1062944989845262336', '1063328532492587008');

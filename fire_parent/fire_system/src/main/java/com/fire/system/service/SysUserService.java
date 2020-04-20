@@ -23,13 +23,13 @@ public interface SysUserService {
 
     List<SysUser> queryAll(SysUser sysUser);
 
-    PageInfo<SysUser> queryByPage(SysUser sysUser,int pageNum, int pageSize);
+    PageInfo<SysUser> queryByPage(SysUser sysUser, int pageNum, int pageSize);
 
     /**
      * 查询多条数据
      *
      * @param offset 查询起始位置
-     * @param limit 查询条数
+     * @param limit  查询条数
      * @return 对象列表
      */
     List<SysUser> queryAllByLimit(int offset, int limit);
@@ -57,5 +57,13 @@ public interface SysUserService {
      * @return 是否成功
      */
     boolean deleteById(Long id);
+
+    /**
+     * 分别角色，一个用户可以分配多个角色
+     *
+     * @param id      用户id
+     * @param roleIds 角色id
+     */
+    void assignRoles(Long id, List<Long> roleIds);
 
 }

@@ -1,9 +1,12 @@
 package com.fire.system.controller;
 
 import com.fire.common.controller.BaseController;
+import com.fire.common.exception.CommonException;
 import com.fire.common.model.Result;
 import com.fire.common.model.StatusCode;
 import com.fire.entity.system.SysUser;
+import com.fire.entity.system.SysUserRole;
+import com.fire.system.service.SysUserRoleService;
 import com.fire.system.service.SysUserService;
 import com.github.pagehelper.PageInfo;
 import org.springframework.web.bind.annotation.*;
@@ -26,6 +29,9 @@ public class SysUserController extends BaseController {
      */
     @Resource
     private SysUserService sysUserService;
+
+    @Resource
+    private SysUserRoleService sysUserRoleService;
 
     /**
      * 通过主键查询单条数据
@@ -70,6 +76,20 @@ public class SysUserController extends BaseController {
         } else {
             return new Result(false, StatusCode.OK, "删除失败");
         }
+    }
+
+
+    //批量新增角色，可以对多个不用的userId操作，无论新增、更新、删除用户角色，都是调用此方法
+    @PostMapping("/role")
+    public Result<Integer> insertUserRole(@RequestBody List<SysUserRole> list) throws Exception {
+        int count = sysUserRoleService.insertByBatch(list);
+        return new Result<>(true, StatusCode.OK, "新增完成", count);
+    }
+
+    //根据userId查询角色id列表
+    @GetMapping("/role/{userId}")
+    public List<Long> queryRoleByUserId(@PathVariable Long userId) {
+        return sysUserRoleService.queryByUserId(userId);
     }
 
 }
