@@ -32,9 +32,9 @@ import java.util.Map;
 @RestController
 @CrossOrigin
 public class HomeController {
-    private final String SAASADMIN="saasAdmin";
-    private final String COADMIN="coAdmin";
-    private final String COUSER="user";
+    private final String SAAS_ADMIN ="saasAdmin";
+    private final String CO_ADMIN ="coAdmin";
+    private final String CO_USER ="user";
 
     @Resource
     private SysUserService sysUserService;
@@ -101,14 +101,14 @@ public class HomeController {
         List<SysPermission> permissions = null;
         String level = user.getLevel();
 
-        if(this.COUSER.equals(level)){
+        if(this.CO_USER.equals(level)){
             permissions = this.sysUserService.queryByUserId(userId);
         }else {
             SysPermission perm = new SysPermission();
-            if(this.COADMIN.equals(level)){
+            if(this.CO_ADMIN.equals(level)){
                 //如果是coAdmin用户获取企业内部所有权限
                 perm.setEnVisible(1);
-            }else if (this.SAASADMIN.equals(user.getLevel())){
+            }else if (this.SAAS_ADMIN.equals(user.getLevel())){
                 //如果是saasAdmin用户获取应用所有权限
             }else{
                 throw new Exception("未知类型用户");
