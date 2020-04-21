@@ -6,10 +6,12 @@ import com.fire.common.utils.JwtUtils;
 import com.fire.entity.system.SysPermission;
 import com.fire.entity.system.SysUser;
 import com.fire.entity.system.vo.ProfileVO;
+import com.fire.system.service.SysPermissionService;
 import com.fire.system.service.SysUserService;
 import io.jsonwebtoken.Claims;
 import org.springframework.stereotype.Controller;
 import org.springframework.util.StringUtils;
+import org.springframework.web.bind.annotation.CrossOrigin;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RestController;
@@ -28,9 +30,17 @@ import java.util.Map;
  **/
 @Controller
 @RestController
+@CrossOrigin
 public class HomeController {
+    private final String SAASADMIN="saasAdmin";
+    private final String COADMIN="coAdmin";
+    private final String COUSER="user";
+
     @Resource
     private SysUserService sysUserService;
+
+    @Resource
+    private SysPermissionService sysPermissionService;
 
     @Resource
     private JwtUtils jwtUtils;
@@ -86,8 +96,25 @@ public class HomeController {
         //3.解析token
         Claims claims = jwtUtils.parseJwt(token);
         Long userId = Long.parseLong(claims.getId());
+
         SysUser user = this.sysUserService.queryById(userId);
-        List<SysPermission> permissions = this.sysUserService.queryByUserId(userId);
+        List<SysPermission> permissions = null;
+        String level = user.getLevel();
+
+        if(this.COUSER.equals(level)){
+            permissions = this.sysUserService.queryByUserId(userId);
+        }else {
+            SysPermission perm = new SysPermission();
+            if(this.COADMIN.equals(level)){
+                //如果是coAdmin用户获取企业内部所有权限
+                perm.setEnVisible(1);
+            }else if (this.SAASADMIN.equals(user.getLevel())){
+                //如果是saasAdmin用户获取应用所有权限
+            }else{
+                throw new Exception("未知类型用户");
+            }
+            permissions = sysPermissionService.queryAll(perm);
+        }
         ProfileVO result = new ProfileVO(user,permissions);
         return new Result<ProfileVO>(true,StatusCode.OK,"获取权限成功",result);
     }

@@ -51,7 +51,7 @@ public class SysPermissionServiceImpl implements SysPermissionService {
      * 通过ID查询单条数据
      *
      * @param id 主键
-     * @return 实例对象
+     * @return PermissionVO 实例对象
      */
     @Override
     public PermissionVO queryById(Long id) throws Exception {
