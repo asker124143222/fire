@@ -1,5 +1,6 @@
 package com.fire.system.service;
 
+import com.fire.entity.system.SysPermission;
 import com.fire.entity.system.SysUser;
 import com.github.pagehelper.PageInfo;
 
@@ -26,15 +27,6 @@ public interface SysUserService {
     PageInfo<SysUser> queryByPage(SysUser sysUser, int pageNum, int pageSize);
 
     /**
-     * 查询多条数据
-     *
-     * @param offset 查询起始位置
-     * @param limit  查询条数
-     * @return 对象列表
-     */
-    List<SysUser> queryAllByLimit(int offset, int limit);
-
-    /**
      * 新增数据
      *
      * @param sysUser 实例对象
@@ -58,12 +50,12 @@ public interface SysUserService {
      */
     boolean deleteById(Long id);
 
-    /**
-     * 分别角色，一个用户可以分配多个角色
-     *
-     * @param id      用户id
-     * @param roleIds 角色id
-     */
-    void assignRoles(Long id, List<Long> roleIds);
+    SysUser queryByMobile(String mobile);
 
+    /**
+     * 通过userId查询用户的权限
+     * @param userId
+     * @return List<SysPermission>
+     */
+    List<SysPermission> queryByUserId(Long userId);
 }

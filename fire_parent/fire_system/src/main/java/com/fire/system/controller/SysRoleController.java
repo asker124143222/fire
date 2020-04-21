@@ -5,13 +5,16 @@ import com.fire.common.model.Result;
 import com.fire.common.model.StatusCode;
 import com.fire.entity.system.SysRole;
 import com.fire.entity.system.SysRolePermission;
+import com.fire.entity.system.vo.RoleVO;
 import com.fire.system.service.SysRolePermissionService;
 import com.fire.system.service.SysRoleService;
 import com.github.pagehelper.PageInfo;
 import org.springframework.web.bind.annotation.*;
 
 import javax.annotation.Resource;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 
 /**
  * (SysRole)表控制层
@@ -39,8 +42,16 @@ public class SysRoleController extends BaseController {
      * @return 单条数据
      */
     @GetMapping("{id}")
-    public SysRole selectOne(@PathVariable Long id) {
-        return this.sysRoleService.queryById(id);
+    public RoleVO selectOne(@PathVariable Long id) {
+        SysRole sysRole = this.sysRoleService.queryById(id);
+        if(sysRole == null) return null;
+        RoleVO vo = new RoleVO(sysRole);
+        List<Long> permIds = this.sysRolePermissionService.queryById(id);
+        Set<Long> set = new HashSet<>();
+        set.addAll(permIds);
+        vo.setPermIds(set);
+
+        return vo;
     }
 
     @GetMapping

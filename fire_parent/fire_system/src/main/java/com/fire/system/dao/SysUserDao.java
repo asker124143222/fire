@@ -1,7 +1,10 @@
 package com.fire.system.dao;
 
+import com.fire.entity.system.SysPermission;
 import com.fire.entity.system.SysUser;
 import org.apache.ibatis.annotations.Param;
+import org.apache.ibatis.annotations.Select;
+
 import java.util.List;
 
 /**
@@ -19,16 +22,6 @@ public interface SysUserDao {
      * @return 实例对象
      */
     SysUser queryById(Long id);
-
-    /**
-     * 查询指定行数据
-     *
-     * @param offset 查询起始位置
-     * @param limit 查询条数
-     * @return 对象列表
-     */
-    List<SysUser> queryAllByLimit(@Param("offset") int offset, @Param("limit") int limit);
-
 
     /**
      * 通过实体作为筛选条件查询
@@ -61,5 +54,20 @@ public interface SysUserDao {
      * @return 影响行数
      */
     int deleteById(Long id);
+
+
+    @Select("select * from sys_user where mobile=#{mobile}")
+    SysUser queryByMobile(String mobile);
+
+
+    /**
+     * 通过userId查询用户的权限
+     * @param userId
+     * @return List<SysPermission>
+     */
+    @Select("select a.* from sys_permission a\n" +
+            "inner join sys_role_permission b on b.permission_id=a.id\n" +
+            "inner join sys_user_role c on c.role_id=b.role_id and c.user_id=#{userId}")
+    List<SysPermission> queryByUserId(Long userId);
 
 }

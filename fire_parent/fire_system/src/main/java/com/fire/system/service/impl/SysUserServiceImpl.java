@@ -1,6 +1,7 @@
 package com.fire.system.service.impl;
 
 import com.fire.common.utils.IdWorker;
+import com.fire.entity.system.SysPermission;
 import com.fire.entity.system.SysUser;
 import com.fire.system.dao.SysUserDao;
 import com.fire.system.service.SysUserService;
@@ -36,6 +37,7 @@ public class SysUserServiceImpl implements SysUserService {
         return this.sysUserDao.queryById(id);
     }
 
+
     @Override
     public List<SysUser> queryAll(SysUser sysUser) {
         return sysUserDao.queryAll(sysUser);
@@ -45,18 +47,6 @@ public class SysUserServiceImpl implements SysUserService {
     public PageInfo<SysUser> queryByPage(SysUser sysUser,int pageNum, int pageSize) {
         PageHelper.startPage(pageNum,pageSize);
         return new PageInfo<>(sysUserDao.queryAll(sysUser));
-    }
-
-    /**
-     * 查询多条数据
-     *
-     * @param offset 查询起始位置
-     * @param limit 查询条数
-     * @return 对象列表
-     */
-    @Override
-    public List<SysUser> queryAllByLimit(int offset, int limit) {
-        return this.sysUserDao.queryAllByLimit(offset, limit);
     }
 
     /**
@@ -98,14 +88,19 @@ public class SysUserServiceImpl implements SysUserService {
         return this.sysUserDao.deleteById(id) > 0;
     }
 
+
+    @Override
+    public SysUser queryByMobile(String mobile) {
+        return this.sysUserDao.queryByMobile(mobile);
+    }
+
     /**
-     * 分别角色，一个用户可以分配多个角色
-     *
-     * @param id      用户id
-     * @param roleIds 角色id
+     * 通过userId查询用户的权限
+     * @param userId
+     * @return List<SysPermission>
      */
     @Override
-    public void assignRoles(Long id, List<Long> roleIds) {
-
+    public List<SysPermission> queryByUserId(Long userId) {
+        return this.sysUserDao.queryByUserId(userId);
     }
 }

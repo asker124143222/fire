@@ -33,6 +33,12 @@ public class SysUserRoleServiceImpl implements SysUserRoleService {
         return sysUserRoleDao.queryByUserId(userId);
     }
 
+    /**
+     * 批量给用户分别角色，用户可以是多个
+     * @param roles
+     * @return
+     * @throws Exception
+     */
     @Transactional
     @Override
     public int insertByBatch(List<SysUserRole> roles) throws Exception {

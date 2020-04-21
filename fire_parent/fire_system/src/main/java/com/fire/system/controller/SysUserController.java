@@ -1,18 +1,21 @@
 package com.fire.system.controller;
 
 import com.fire.common.controller.BaseController;
-import com.fire.common.exception.CommonException;
 import com.fire.common.model.Result;
 import com.fire.common.model.StatusCode;
 import com.fire.entity.system.SysUser;
 import com.fire.entity.system.SysUserRole;
+import com.fire.entity.system.vo.UserVO;
+import com.fire.system.service.SysRolePermissionService;
 import com.fire.system.service.SysUserRoleService;
 import com.fire.system.service.SysUserService;
 import com.github.pagehelper.PageInfo;
 import org.springframework.web.bind.annotation.*;
 
 import javax.annotation.Resource;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 
 /**
  * (SysUser)表控制层
@@ -33,15 +36,25 @@ public class SysUserController extends BaseController {
     @Resource
     private SysUserRoleService sysUserRoleService;
 
+    @Resource
+    private SysRolePermissionService sysRolePermissionService;
+
     /**
      * 通过主键查询单条数据
      *
      * @param id 主键
-     * @return 单条数据
+     * @return UserVO 单条数据
      */
     @GetMapping("{id}")
-    public SysUser selectOne(@PathVariable Long id) {
-        return this.sysUserService.queryById(id);
+    public UserVO selectOne(@PathVariable Long id) {
+        SysUser user = this.sysUserService.queryById(id);
+        if(user == null) return null;
+        UserVO userVO = new UserVO(user);
+
+        Set<Long> roleIds = new HashSet<>(this.sysUserRoleService.queryByUserId(id));
+        userVO.setRoleIds(roleIds);
+
+        return userVO;
     }
 
     @GetMapping

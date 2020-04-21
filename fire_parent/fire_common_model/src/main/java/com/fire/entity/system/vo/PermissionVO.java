@@ -2,15 +2,16 @@ package com.fire.entity.system.vo;
 
 import lombok.Data;
 
+import java.io.Serializable;
 import java.util.Date;
 
 /**
  * @Author: xu.dm
  * @Date: 2020/4/19 17:26
- * @Description: 将权限、API、菜单、按钮组合成一个视图
+ * @Description: 将权限、API、菜单、按钮组合成一个VO
  */
 @Data
-public class PermissionVO {
+public class PermissionVO implements Serializable {
     /**
      * 主键
      */

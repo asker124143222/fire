@@ -1,6 +1,7 @@
 package com.fire.system.config;
 
 import com.fire.common.utils.IdWorker;
+import com.fire.common.utils.JwtUtils;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 
@@ -15,5 +16,10 @@ public class AppConfig {
     @Bean
     public IdWorker idWorker(){
         return new IdWorker(1,1);
+    }
+
+    @Bean
+    public JwtUtils jwtUtils(){
+        return new JwtUtils();
     }
 }

@@ -53,6 +53,14 @@
             <scope>provided</scope>
         </dependency>
 
+        <!--        配置执行器,读取自定义配置内容和文件-->
+        <dependency>
+            <groupId>org.springframework.boot</groupId>
+            <artifactId>spring-boot-configuration-processor</artifactId>
+            <optional>true</optional>
+        </dependency>
+
+
         <!--swagger文档-->
         <!-- 引入Swagger       -->
         <dependency>

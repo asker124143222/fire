@@ -11,13 +11,26 @@ import java.util.List;
  */
 public interface SysRolePermissionService {
 
-    //通过角色id获取权限id列表
+    /**
+     * 通过角色id获取权限id列表
+     * @param roleId
+     * @return
+     */
     List<Long> queryById(Long roleId);
 
-    //为角色分配权限
+    /**
+     * 为角色分配权限
+     * @param list
+     * @return
+     * @throws Exception
+     */
     int insertByBatch(List<SysRolePermission> list) throws Exception;
 
-    //根据角色删除权限
+    /**
+     * 根据角色删除权限
+     * @param roleId
+     * @return
+     */
     int deleteById(Long roleId);
 
 }

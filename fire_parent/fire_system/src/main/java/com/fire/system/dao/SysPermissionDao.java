@@ -2,6 +2,8 @@ package com.fire.system.dao;
 
 import com.fire.entity.system.SysPermission;
 import org.apache.ibatis.annotations.Param;
+import org.apache.ibatis.annotations.Select;
+
 import java.util.List;
 
 /**
@@ -61,5 +63,6 @@ public interface SysPermissionDao {
      * @return 影响行数
      */
     int deleteById(Long id);
+
 
 }

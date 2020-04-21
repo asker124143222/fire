@@ -49,4 +49,7 @@ pagehelper:
   support-methods-arguments: true
   params: count=countsql
   helper-dialect: mysql
-
+jwt:
+  config:
+    key: fire_king_m78
+    ttl: 3600000
