@@ -64,5 +64,4 @@ public interface SysPermissionDao {
      */
     int deleteById(Long id);
 
-
 }

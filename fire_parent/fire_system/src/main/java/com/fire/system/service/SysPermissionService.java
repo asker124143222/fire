@@ -57,4 +57,11 @@ public interface SysPermissionService {
      */
     boolean deleteById(Long id) throws CommonException;
 
+
+    /**
+     * 根据传入的对象 返回权限code
+     * @param sysPermission 权限对象
+     * @return 返回权限code列表
+     */
+    List<String> queryPermCodeAll(SysPermission sysPermission);
 }

@@ -19,9 +19,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import javax.annotation.Resource;
-import java.util.Date;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 
 /**
  * (SysPermission)表服务实现类
@@ -70,7 +68,7 @@ public class SysPermissionServiceImpl implements SysPermissionService {
                 object = permissionApiDao.queryById(id);
                 break;
             default:
-                throw new CommonException(StatusCode.ERROR);
+                throw new CommonException(StatusCode.ERROR,"未知权限类型");
         }
 
         Map<String, Object> map = BeanMapUtils.beanToMap(object);
@@ -137,7 +135,7 @@ public class SysPermissionServiceImpl implements SysPermissionService {
                 permissionApiDao.insert(api);
                 break;
             default:
-                throw new CommonException(StatusCode.ERROR);
+                throw new CommonException(StatusCode.ERROR,"未知权限类型");
         }
         //3.保存
         sysPermissionDao.insert(perm);
@@ -181,7 +179,7 @@ public class SysPermissionServiceImpl implements SysPermissionService {
                 permissionApiDao.update(api);
                 break;
             default:
-                throw new CommonException(StatusCode.ERROR);
+                throw new CommonException(StatusCode.ERROR,"未知权限类型");
         }
         //3.保存
         sysPermissionDao.update(perm);
@@ -216,24 +214,21 @@ public class SysPermissionServiceImpl implements SysPermissionService {
                 count +=permissionApiDao.deleteById(id);
                 break;
             default:
-                throw new CommonException(StatusCode.ERROR);
+                throw new CommonException(StatusCode.ERROR,"未知权限类型");
         }
 
         return count > 0;
     }
 
-//    public static void main(String[] args) throws Exception {
-//        Map map = new HashMap();
-//        map.put("name", "zhangsan");
-//        map.put("id", 1234L);
-//        map.put("createTime",new Date());
-//        map.put("test", "zhangsan");
-//        map.put("url", "zhangsan");
-//
-//        SysPermission obj =  BeanMapUtils.mapToBean(map, SysPermission.class);
-//        Map map1 = BeanMapUtils.beanToMap(obj);
-//        System.out.println(obj);
-//
-//        System.out.println(map1.toString());
-//    }
+
+    @Override
+    public List<String> queryPermCodeAll(SysPermission sysPermission) {
+        List<SysPermission> permissions = this.sysPermissionDao.queryAll(sysPermission);
+        Set<String> codes = new HashSet<>();
+        for (SysPermission permission : permissions) {
+            codes.add(permission.getCode());
+        }
+        return new ArrayList<>(codes);
+    }
+
 }

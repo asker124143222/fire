@@ -58,4 +58,11 @@ public interface SysUserService {
      * @return List<SysPermission>
      */
     List<SysPermission> queryByUserId(Long userId);
+
+    /**
+     * 通过userId查询用户的权限code列表
+     * @param userId
+     * @return List<String>
+     */
+    List<String> queryPermCodeByUserId(Long userId);
 }

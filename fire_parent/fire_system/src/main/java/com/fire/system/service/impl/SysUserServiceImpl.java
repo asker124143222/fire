@@ -10,8 +10,7 @@ import com.github.pagehelper.PageInfo;
 import org.springframework.stereotype.Service;
 
 import javax.annotation.Resource;
-import java.util.Date;
-import java.util.List;
+import java.util.*;
 
 /**
  * (SysUser)表服务实现类
@@ -96,11 +95,27 @@ public class SysUserServiceImpl implements SysUserService {
 
     /**
      * 通过userId查询用户的权限
-     * @param userId
+     * @param userId 用户id
      * @return List<SysPermission>
      */
     @Override
     public List<SysPermission> queryByUserId(Long userId) {
         return this.sysUserDao.queryByUserId(userId);
+    }
+
+    /**
+     * 通过userId查询用户的权限code
+     * 这个方法会经常调用，考虑加入缓存
+     * @param userId 用户id
+     * @return List<String>
+     */
+    @Override
+    public List<String> queryPermCodeByUserId(Long userId) {
+        List<SysPermission> permissions = this.sysUserDao.queryByUserId(userId);
+        Set<String> codes = new HashSet<>();
+        for (SysPermission permission : permissions) {
+            codes.add(permission.getCode());
+        }
+        return new ArrayList<>(codes);
     }
 }

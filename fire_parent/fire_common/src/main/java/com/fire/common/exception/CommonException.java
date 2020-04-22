@@ -11,7 +11,8 @@ public class CommonException extends Exception  {
 
     private int statusCode;
 
-    public CommonException(int statusCode) {
+    public CommonException(int statusCode,String message) {
+        super(message);
         this.statusCode = statusCode;
     }
 }

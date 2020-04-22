@@ -1,5 +1,6 @@
 package com.fire.common.handler;
 
+import com.fire.common.exception.CommonException;
 import com.fire.common.model.Result;
 import com.fire.common.model.StatusCode;
 import org.springframework.web.bind.annotation.ControllerAdvice;
@@ -24,6 +25,12 @@ public class BaseExceptionHandler {
     @ResponseBody
     public Result error(Exception e) {
         e.printStackTrace();
+        if(e.getClass() == CommonException.class) {
+            //类型转型
+            CommonException ce = (CommonException) e;
+            Result result = new Result(false,ce.getStatusCode(),e.getMessage());
+            return result;
+        }
         return new Result(false, StatusCode.ERROR, e.getMessage());
     }
 }

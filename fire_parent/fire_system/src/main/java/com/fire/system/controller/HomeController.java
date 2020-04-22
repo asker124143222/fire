@@ -1,5 +1,7 @@
 package com.fire.system.controller;
 
+import com.fire.common.controller.BaseController;
+import com.fire.common.exception.CommonException;
 import com.fire.common.model.Result;
 import com.fire.common.model.StatusCode;
 import com.fire.common.utils.JwtUtils;
@@ -18,6 +20,7 @@ import org.springframework.web.bind.annotation.RestController;
 
 import javax.annotation.Resource;
 import javax.servlet.http.HttpServletRequest;
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -31,10 +34,10 @@ import java.util.Map;
 @Controller
 @RestController
 @CrossOrigin
-public class HomeController {
-    private final String SAAS_ADMIN ="saasAdmin";
-    private final String CO_ADMIN ="coAdmin";
-    private final String CO_USER ="user";
+public class HomeController extends BaseController {
+    private final String CO_USER = "user";
+    private final String SAAS_ADMIN = "saasAdmin";
+    private final String CO_ADMIN = "coAdmin";
 
     @Resource
     private SysUserService sysUserService;
@@ -47,76 +50,90 @@ public class HomeController {
 
     /**
      * 用户登录
-     *  1.通过service根据mobile查询用户
-     *  2.比较password
-     *  3.生成jwt信息
-     *
+     * 1.通过service根据mobile查询用户
+     * 2.比较password
+     * 3.生成jwt信息
      */
-    @PostMapping({"/","/login"})
-    public Result<String> login(@RequestBody Map<String,String> loginMap) {
+    @PostMapping({"/", "/login"})
+    public Result<String> login(@RequestBody Map<String, String> loginMap) throws Exception {
         String mobile = loginMap.get("mobile");
         String password = loginMap.get("password");
         SysUser user = sysUserService.queryByMobile(mobile);
         //登录失败
-        if(user == null || !user.getPassword().equals(password)) {
-            return new Result<>(false, StatusCode.LOGINERROR,"登录失败");
-        }else {
+        if (user == null || !user.getPassword().equals(password)) {
+            return new Result<>(false, StatusCode.LOGINERROR, "登录失败");
+        } else {
             //登录成功
-            Map<String,Object> map = new HashMap<>();
-            map.put("companyId",user.getCompanyId());
-            map.put("companyName",user.getCompanyName());
+            //api权限字符串
+            StringBuilder sb = new StringBuilder();
+            String level = user.getLevel();
+            List<String> codes = null;
+            if(this.CO_USER.equals(level)){
+                codes = this.sysUserService.queryPermCodeByUserId(user.getId());
+            }else if(this.CO_ADMIN.equals(level)){
+                SysPermission permission = new SysPermission();
+                permission.setEnVisible(1);
+                codes = this.sysPermissionService.queryPermCodeAll(permission);
+            }else if(this.SAAS_ADMIN.equals(level)){
+                codes = this.sysPermissionService.queryPermCodeAll(new SysPermission());
+            }
+            else {
+                throw new CommonException(StatusCode.ERROR,"未知类型用户");
+            }
+            for (String code : codes) {
+                sb.append(code).append(",");
+            }
+
+            Map<String, Object> map = new HashMap<>();
+            map.put("apis", sb.toString());
+            map.put("companyId", user.getCompanyId());
+            map.put("companyName", user.getCompanyName());
             String token = jwtUtils.createJwt(user.getId().toString(), user.getUsername(), map);
-            return new Result<>(true,StatusCode.OK,"登录成功",token);
+            return new Result<>(true, StatusCode.OK, "登录成功", token);
         }
     }
 
     /**
-     * 用户登录成功之后，获取用户信息
-     *      1.获取用户id
-     *      2.根据用户id查询用户
-     *      3.构建返回值对象
-     *      4.响应
+     * 用户登录成功之后，获取用户信息，用于构建前端页面菜单和按钮
+     * 1.获取用户id
+     * 2.根据用户id查询用户
+     * 3.构建返回值对象
+     * 4.响应
      */
     @PostMapping("/profile")
     public Result<ProfileVO> profile(HttpServletRequest request) throws Exception {
-        /**
-         * 从请求头信息中获取token数据
-         *   1.获取请求头信息：名称=Authorization
-         *   2.替换Bearer+空格
-         *   3.解析token
-         *   4.获取clamis
-         */
-        //1.获取请求头信息：名称=Authorization
-        String authorization = request.getHeader("Authorization");
-        if(StringUtils.isEmpty(authorization)) {
-            throw new Exception("Authorization failed");
+
+        Object obj = request.getAttribute("user_claims");
+        Claims claims = null;
+        if(obj!=null){
+            claims = (Claims)obj;
         }
-        //2.替换Bearer+空格
-        String token = authorization.replace("Bearer ","");
-        //3.解析token
-        Claims claims = jwtUtils.parseJwt(token);
         Long userId = Long.parseLong(claims.getId());
 
         SysUser user = this.sysUserService.queryById(userId);
+        if (user == null) return null;
+
         List<SysPermission> permissions = null;
         String level = user.getLevel();
 
-        if(this.CO_USER.equals(level)){
+        if (CO_USER.equals(level)) {
             permissions = this.sysUserService.queryByUserId(userId);
-        }else {
-            SysPermission perm = new SysPermission();
-            if(this.CO_ADMIN.equals(level)){
-                //如果是coAdmin用户获取企业内部所有权限
+        } else {
+            SysPermission perm = null;
+            if (CO_ADMIN.equals(level)) {
+                //如果是coAdmin用户获取企业内部所有权限，传入enVisible=1的获取对应的所有权限
+                perm = new SysPermission();
                 perm.setEnVisible(1);
-            }else if (this.SAAS_ADMIN.equals(user.getLevel())){
-                //如果是saasAdmin用户获取应用所有权限
-            }else{
-                throw new Exception("未知类型用户");
+            } else if (SAAS_ADMIN.equals(user.getLevel())) {
+                //如果是saasAdmin用户获取应用所有权限，传入空的SysPermission，获取所有权限
+                perm = new SysPermission();
+            } else {
+                throw new CommonException(StatusCode.ERROR, "未知类型用户");
             }
             permissions = sysPermissionService.queryAll(perm);
         }
-        ProfileVO result = new ProfileVO(user,permissions);
-        return new Result<ProfileVO>(true,StatusCode.OK,"获取权限成功",result);
+        ProfileVO result = new ProfileVO(user, permissions);
+        return new Result<>(true, StatusCode.OK, "获取权限成功", result);
     }
 
 }

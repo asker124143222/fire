@@ -6,7 +6,6 @@ import com.fire.common.model.StatusCode;
 import com.fire.entity.system.SysUser;
 import com.fire.entity.system.SysUserRole;
 import com.fire.entity.system.vo.UserVO;
-import com.fire.system.service.SysRolePermissionService;
 import com.fire.system.service.SysUserRoleService;
 import com.fire.system.service.SysUserService;
 import com.github.pagehelper.PageInfo;
@@ -35,9 +34,6 @@ public class SysUserController extends BaseController {
 
     @Resource
     private SysUserRoleService sysUserRoleService;
-
-    @Resource
-    private SysRolePermissionService sysRolePermissionService;
 
     /**
      * 通过主键查询单条数据
@@ -70,7 +66,7 @@ public class SysUserController extends BaseController {
         return sysUserService.queryByPage(sysUser, pageNum, pageSize);
     }
 
-    @PostMapping
+    @PostMapping(name = "POINT-USER-ADD")
     public Result<SysUser> insert(@RequestBody SysUser sysUser) {
         sysUser.setCompanyId(super.companyId);
         sysUser.setCompanyName(super.companyName);

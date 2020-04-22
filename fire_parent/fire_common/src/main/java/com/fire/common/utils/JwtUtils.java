@@ -33,16 +33,18 @@ public class JwtUtils {
         long exp = now + ttl;
         //2.创建jwtBuilder
         JwtBuilder jwtBuilder = Jwts.builder().setId(id).setSubject(name)
+                //令牌签发时间
                 .setIssuedAt(new Date())
                 .signWith(SignatureAlgorithm.HS256, key);
         //3.根据map设置claims
         for(Map.Entry<String,Object> entry : map.entrySet()) {
             jwtBuilder.claim(entry.getKey(),entry.getValue());
         }
+        //过期时间需要大于签发时间，过期后，再次访问令牌就会抛出异常
         jwtBuilder.setExpiration(new Date(exp));
         //4.创建token
-        String token = jwtBuilder.compact();
-        return token;
+        return jwtBuilder.compact();
+
     }
 
 
