@@ -12,6 +12,7 @@
         <module>fire_common_model</module>
         <module>fire_company</module>
         <module>fire_system</module>
+        <module>fire_eureka</module>
     </modules>
     <packaging>pom</packaging>
     <description>火之父工程</description>
@@ -80,6 +81,16 @@
         -->
     </dependencies>
 
-
+    <dependencyManagement>
+        <dependencies>
+            <dependency>
+                <groupId>org.springframework.cloud</groupId>
+                <artifactId>spring-cloud-dependencies</artifactId>
+                <version>Hoxton.SR3</version>
+                <type>pom</type>
+                <scope>import</scope>
+            </dependency>
+        </dependencies>
+    </dependencyManagement>
 
 </project>

@@ -1,6 +1,15 @@
 server:
   port: 8081
 
+eureka:
+  client:
+    service-url:
+      defaultZone: http://127.0.0.1:9001/eureka
+  instance:
+    prefer-ip-address: true
+feign:
+  hystrix:
+    enabled: true
 
 logging:
   file:
