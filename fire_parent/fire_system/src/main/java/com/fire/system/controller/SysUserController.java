@@ -1,20 +1,23 @@
 package com.fire.system.controller;
 
+import com.fasterxml.jackson.core.JsonProcessingException;
+import com.fasterxml.jackson.databind.ObjectMapper;
+import com.fasterxml.jackson.databind.json.JsonMapper;
 import com.fire.common.controller.BaseController;
 import com.fire.common.model.Result;
 import com.fire.common.model.StatusCode;
+import com.fire.entity.company.CoCompany;
 import com.fire.entity.system.SysUser;
 import com.fire.entity.system.SysUserRole;
 import com.fire.entity.system.vo.UserVO;
+import com.fire.system.client.CompanyFeignClient;
 import com.fire.system.service.SysUserRoleService;
 import com.fire.system.service.SysUserService;
 import com.github.pagehelper.PageInfo;
 import org.springframework.web.bind.annotation.*;
 
 import javax.annotation.Resource;
-import java.util.HashSet;
-import java.util.List;
-import java.util.Set;
+import java.util.*;
 
 /**
  * (SysUser)表控制层
@@ -34,6 +37,22 @@ public class SysUserController extends BaseController {
 
     @Resource
     private SysUserRoleService sysUserRoleService;
+
+    @Resource
+    private CompanyFeignClient companyFeignClient;
+
+    //测试使用
+    @GetMapping("/company/{userId}")
+    public CoCompany findCompanyDetailByUserId(@PathVariable Long userId) throws JsonProcessingException {
+        List<CoCompany> companies = companyFeignClient.selectAll();
+        SysUser user = sysUserService.queryById(userId);
+        for (CoCompany company : companies) {
+            if(company.getId().equals(user.getCompanyId())){
+                return company;
+            }
+        }
+        return null;
+    }
 
     /**
      * 通过主键查询单条数据

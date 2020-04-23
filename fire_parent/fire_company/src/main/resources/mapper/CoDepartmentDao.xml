@@ -1,0 +1,119 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.fire.company.dao.CoDepartmentDao">
+
+    <resultMap type="com.fire.entity.company.CoDepartment" id="CoDepartmentMap">
+        <result property="id" column="id" jdbcType="INTEGER"/>
+        <result property="companyId" column="company_id" jdbcType="INTEGER"/>
+        <result property="pid" column="pid" jdbcType="INTEGER"/>
+        <result property="name" column="name" jdbcType="VARCHAR"/>
+        <result property="code" column="code" jdbcType="VARCHAR"/>
+        <result property="managerId" column="manager_id" jdbcType="INTEGER"/>
+        <result property="manager" column="manager" jdbcType="VARCHAR"/>
+        <result property="introduce" column="introduce" jdbcType="VARCHAR"/>
+        <result property="createTime" column="create_time" jdbcType="TIMESTAMP"/>
+        <result property="updateTime" column="update_time" jdbcType="TIMESTAMP"/>
+    </resultMap>
+
+    <!--查询单个-->
+    <select id="queryById" resultMap="CoDepartmentMap">
+        select
+          id, company_id, pid, name, code, manager_id, manager, introduce, create_time, update_time
+        from firedb.co_department
+        where id = #{id}
+    </select>
+
+    <!--查询指定行数据-->
+    <select id="queryAllByLimit" resultMap="CoDepartmentMap">
+        select
+          id, company_id, pid, name, code, manager_id, manager, introduce, create_time, update_time
+        from firedb.co_department
+        limit #{offset}, #{limit}
+    </select>
+
+    <!--通过实体作为筛选条件查询-->
+    <select id="queryAll" resultMap="CoDepartmentMap">
+        select
+          id, company_id, pid, name, code, manager_id, manager, introduce, create_time, update_time
+        from firedb.co_department
+        <where>
+            <if test="id != null">
+                and id = #{id}
+            </if>
+            <if test="companyId != null">
+                and company_id = #{companyId}
+            </if>
+            <if test="pid != null">
+                and pid = #{pid}
+            </if>
+            <if test="name != null and name != ''">
+                and name = #{name}
+            </if>
+            <if test="code != null and code != ''">
+                and code = #{code}
+            </if>
+            <if test="managerId != null">
+                and manager_id = #{managerId}
+            </if>
+            <if test="manager != null and manager != ''">
+                and manager = #{manager}
+            </if>
+            <if test="introduce != null and introduce != ''">
+                and introduce = #{introduce}
+            </if>
+            <if test="createTime != null">
+                and create_time = #{createTime}
+            </if>
+            <if test="updateTime != null">
+                and update_time = #{updateTime}
+            </if>
+        </where>
+    </select>
+
+    <!--新增所有列-->
+    <insert id="insert" keyProperty="id" useGeneratedKeys="false">
+        insert into firedb.co_department(id,company_id, pid, name, code, manager_id, manager, introduce, create_time, update_time)
+        values (#{id},#{companyId}, #{pid}, #{name}, #{code}, #{managerId}, #{manager}, #{introduce}, #{createTime}, #{updateTime})
+    </insert>
+
+    <!--通过主键修改数据-->
+    <update id="update">
+        update firedb.co_department
+        <set>
+<!--            <if test="companyId != null">-->
+<!--                company_id = #{companyId},-->
+<!--            </if>-->
+            <if test="pid != null">
+                pid = #{pid},
+            </if>
+            <if test="name != null and name != ''">
+                name = #{name},
+            </if>
+            <if test="code != null and code != ''">
+                code = #{code},
+            </if>
+            <if test="managerId != null">
+                manager_id = #{managerId},
+            </if>
+            <if test="manager != null and manager != ''">
+                manager = #{manager},
+            </if>
+            <if test="introduce != null and introduce != ''">
+                introduce = #{introduce},
+            </if>
+            <if test="createTime != null">
+                create_time = #{createTime},
+            </if>
+            <if test="updateTime != null">
+                update_time = #{updateTime},
+            </if>
+        </set>
+        where id = #{id}
+    </update>
+
+    <!--通过主键删除-->
+    <delete id="deleteById">
+        delete from firedb.co_department where id = #{id}
+    </delete>
+
+</mapper>

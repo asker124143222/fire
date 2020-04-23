@@ -11,16 +11,14 @@ import com.fire.entity.system.vo.ProfileVO;
 import com.fire.system.service.SysPermissionService;
 import com.fire.system.service.SysUserService;
 import io.jsonwebtoken.Claims;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Controller;
-import org.springframework.util.StringUtils;
-import org.springframework.web.bind.annotation.CrossOrigin;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 import javax.annotation.Resource;
 import javax.servlet.http.HttpServletRequest;
-import java.util.ArrayList;
+import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -35,6 +33,7 @@ import java.util.Map;
 @RestController
 @CrossOrigin
 public class HomeController extends BaseController {
+    private final Logger logger = LoggerFactory.getLogger(getClass());
     private final String CO_USER = "user";
     private final String SAAS_ADMIN = "saasAdmin";
     private final String CO_ADMIN = "coAdmin";
@@ -48,13 +47,18 @@ public class HomeController extends BaseController {
     @Resource
     private JwtUtils jwtUtils;
 
+    @GetMapping("/login")
+    public Object login2(){
+        return new Result(false,StatusCode.LOGINERROR,"请使用post方式来登录");
+    }
+
     /**
      * 用户登录
      * 1.通过service根据mobile查询用户
      * 2.比较password
      * 3.生成jwt信息
      */
-    @PostMapping({"/", "/login"})
+    @PostMapping("/login")
     public Result<String> login(@RequestBody Map<String, String> loginMap) throws Exception {
         String mobile = loginMap.get("mobile");
         String password = loginMap.get("password");
@@ -89,6 +93,7 @@ public class HomeController extends BaseController {
             map.put("companyId", user.getCompanyId());
             map.put("companyName", user.getCompanyName());
             String token = jwtUtils.createJwt(user.getId().toString(), user.getUsername(), map);
+            logger.info("用户登录："+user.getId()+","+user.getUsername()+","+user.getMobile());
             return new Result<>(true, StatusCode.OK, "登录成功", token);
         }
     }
@@ -136,4 +141,8 @@ public class HomeController extends BaseController {
         return new Result<>(true, StatusCode.OK, "获取权限成功", result);
     }
 
+    @GetMapping("/heartbeat")
+    public Object heartbeat(){
+        return new Date();
+    }
 }

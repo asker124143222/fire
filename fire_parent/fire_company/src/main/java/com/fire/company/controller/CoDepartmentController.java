@@ -43,14 +43,13 @@ public class CoDepartmentController extends BaseController {
         return this.coDepartmentService.queryById(id);
     }
 
-    @GetMapping
+    @GetMapping(name="point-dept")
     public DeptVO selectAll(){
         CoDepartment coDepartment = new CoDepartment();
         coDepartment.setCompanyId(super.companyId);
         List<CoDepartment> lists = coDepartmentService.queryAll(coDepartment);
         CoCompany coCompany = coCompanyService.queryById(super.companyId);
-        DeptVO depts = new DeptVO(coCompany,lists);
-        return depts;
+        return new DeptVO(coCompany,lists);
     }
 
     @GetMapping("/page/{pageNum}/{pageSize}")
@@ -62,6 +61,7 @@ public class CoDepartmentController extends BaseController {
 
     @PostMapping
     public Result<CoDepartment> insert(@RequestBody CoDepartment coDepartment) {
+        coDepartment.setCompanyId(super.companyId);
         coDepartment = coDepartmentService.insert(coDepartment);
         return new Result<>(true, StatusCode.OK,"添加成功",coDepartment);
     }

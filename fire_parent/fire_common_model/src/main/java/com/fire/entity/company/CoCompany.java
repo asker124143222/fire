@@ -1,6 +1,7 @@
 package com.fire.entity.company;
 
 import lombok.Data;
+import lombok.NoArgsConstructor;
 
 import java.util.Date;
 import java.io.Serializable;
@@ -12,6 +13,7 @@ import java.io.Serializable;
  * @since 2020-04-17 11:03:28
  */
 @Data
+@NoArgsConstructor
 public class CoCompany implements Serializable {
     private static final long serialVersionUID = -70602871622981306L;
     /**
