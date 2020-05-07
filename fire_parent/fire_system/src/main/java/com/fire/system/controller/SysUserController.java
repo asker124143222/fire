@@ -43,7 +43,7 @@ public class SysUserController extends BaseController {
 
     //测试使用
     @GetMapping("/company/{userId}")
-    public CoCompany findCompanyDetailByUserId(@PathVariable Long userId) throws JsonProcessingException {
+    public CoCompany findCompanyDetailByUserId(@PathVariable Long userId)  {
         List<CoCompany> companies = companyFeignClient.selectAll();
         SysUser user = sysUserService.queryById(userId);
         for (CoCompany company : companies) {
@@ -60,7 +60,7 @@ public class SysUserController extends BaseController {
      * @param id 主键
      * @return UserVO 单条数据
      */
-    @GetMapping("{id}")
+    @GetMapping(value = "{id}",name = "permissions")
     public UserVO selectOne(@PathVariable Long id) {
         SysUser user = this.sysUserService.queryById(id);
         if(user == null) return null;
@@ -72,7 +72,7 @@ public class SysUserController extends BaseController {
         return userVO;
     }
 
-    @GetMapping
+    @GetMapping(name = "auth:view")
     public List<SysUser> getAllUser() {
         SysUser sysUser = new SysUser();
         sysUser.setCompanyId(super.companyId);
